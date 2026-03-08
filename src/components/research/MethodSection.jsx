@@ -7,7 +7,7 @@ export default function MethodSection({ data }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="py-16 md:py-20">
+    <section id="method" className="py-16 md:py-20 scroll-mt-28">
       <div className="max-w-5xl mx-auto px-6">
         <FadeInSection>
           <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white mb-3">{data.heading}</h2>

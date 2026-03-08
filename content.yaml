@@ -1,106 +1,282 @@
 title: "Opening the Bottleneck: Steering LLMs via Concept Intervention"
-tagline: "A hands-on demo for steering language models by editing interpretable concepts."
+tagline: "A user-friendly GUI that connects LLM outputs to human-understandable concepts"
 authors:
     - name: "Neil Dandekar"
-      affiliation: "UC San Diego"
       link: "mailto:nmdandekar@ucsd.edu"
     - name: "Christian Guerra"
-      affiliation: "UC San Diego"
       link: "mailto:chguerra@ucsd.edu"
     - name: "Lily Weng"
-      affiliation: "UC San Diego"
       link: "mailto:lweng@ucsd.edu"
 
 venue: "HDSI Capstone (Winter 2026)"
-paperLink: null
-paperPlaceholderLink: "https://github.com/neil-dandekar/capstone"
+paperLink: "https://github.com/Trustworthy-ML-Lab/CB-LLMs"
 codeLink: "https://github.com/neil-dandekar/capstone"
 toolLink: "https://chguerra15.github.io/capstone-site/"
-demoLink: "https://chguerra15.github.io/capstone-site/"
 
-teaserImage: "src/assets/cbllm.png"
-teaserCaption: "Type a sentence, move concept sliders, and watch the model’s prediction change in real time."
+body:
+    story:
+        eyebrow: "Why this matters"
+        lead: "LLMs provide zero insight into their decisions"
+        support: >
+            Traditional large language models can produce confident outputs while keeping their reasoning hidden.
+            CB-LLMs expose interpretable concepts so users can inspect what the model is responding to and intervene on it directly.
+        credit:
+            text: "This project builds on the original CB-LLM work by Sun et al."
+            href: "#references"
+        scenario:
+            heading: "Example: LLM-Powered Medical Diagnosis"
+            intro: >
+                If a model predicts low risk, the user still needs to know what signals drove that decision and how to respond when it looks unsafe.
+            inputLabel: "Example patient report"
+            inputExample: "Persistent chest pain, shortness of breath after light activity, and unusual fatigue over the last 3 days."
+            blackBox:
+                eyebrow: "Traditional Black-box"
+                title: "A low-risk label with hidden reasoning"
+                outputLabel: "Low-risk label"
+                sentence: "The label is visible. The symptom weighting is not."
+                chips:
+                    - "What was ignored?"
+                    - "Why low risk?"
+                    - "How do you correct it?"
+            intervention:
+                eyebrow: "CB-LLM outcome"
+                title: "Inspect the concepts, then steer the decision"
+                outputLabel: "Escalate for urgent review"
+                sentence: "The user can inspect the concepts, steer the bottleneck, and compare the changed decision."
+                chips:
+                    - "Surface risk cues"
+                    - "Increase critical concepts"
+                    - "Compare before/after"
 
-abstract: >
-    Modern language models can be powerful, but they are hard to understand and hard to control.
-    We built a concept-based interface that exposes interpretable “concept knobs” (like topic or
-    sentiment). By editing these concepts, anyone can directly test which ideas drive predictions
-    and see causal effects instantly.
+    results:
+        eyebrow: "Results"
+        lead: "See the full intervention workflow from baseline prediction to edited output."
+        support: >
+            The interface is meant to be used as a short, repeatable workflow: inspect the baseline, edit the concept
+            bottleneck, and compare what changed.
+        workflow:
+            - id: "baseline"
+              eyebrow: "Step 1"
+              title: "Inspect the baseline prediction"
+              text: "Start with the model's original output and review the concept signals that are active before any edits."
+              evidenceCaption: "The baseline view keeps the input, output, and top concepts in one place."
+            - id: "edit"
+              eyebrow: "Step 2"
+              title: "Intervene on the concept bottleneck"
+              text: "Adjust a small number of concepts directly while keeping the original values visible as a reference."
+              evidenceCaption: "The interaction happens at the concept level instead of through hidden model weights."
+            - id: "compare"
+              eyebrow: "Step 3"
+              title: "Compare before and after"
+              text: "Read the baseline and intervened states together to see which concept changes actually moved the final decision."
+              evidenceCaption: "The comparison step makes output deltas legible on the same example."
+        capabilitiesHeading: "Delivered Capabilities"
+        capabilityBullets:
+            - "Run a baseline prediction and inspect the active concepts behind it."
+            - "Edit selected concept values while preserving the original bottleneck state."
+            - "Compare the original and intervened outputs on the same input."
+            - "Use the interface as a repeatable before-and-after experiment instead of a static explanation."
+        insightsHeading: "Key Insights"
+        insightBullets:
+            - "Visible concepts make it easier to debug whether a prediction is missing important signals."
+            - "Changing only a few concepts can show which signals are actually influential versus merely present."
+            - "Side-by-side comparison makes intervention understandable even for viewers who have not read the paper."
+            - "The clearest evidence comes from comparing the same input before and after concept edits."
 
-motivation:
-    heading: "Why this matters"
-    text: >
-        Language models increasingly influence real decisions, but most of the time we can’t explain
-        why they say what they say. That makes it difficult to trust them, debug mistakes, or safely
-        deploy them in high-stakes settings. Our project explores a simple idea: what if a model had
-        visible, human-understandable “controls” you could adjust to see how its output changes?
-    image: null
-    imageCaption: null
+    howItWorks:
+        title: "How It Works"
+        support: >
+            This is the process that turns a traditional black-box LLM into an interpretable CB-LLM.
+        software:
+            heading: "1. Software System Architecture"
+            intro: >
+                The tool is a web interface layer around pretrained CB-LLM checkpoints. The frontend handles user
+                interaction, an inference service runs baseline and intervened forward passes, and the response is
+                returned for side-by-side comparison.
+            layers:
+                - title: "Frontend (React + Vite)"
+                  text: >
+                      Collects user input, displays baseline concepts and outputs, captures intervention edits, and
+                      renders before/after comparisons.
+                - title: "Inference API / Backend Service"
+                  text: >
+                      Receives requests from the frontend, runs model inference, and returns predictions, confidence
+                      metadata, and concept activation vectors.
+                - title: "Model Runtime (CB-LLM Checkpoints)"
+                  text: >
+                      Loads pretrained CB-LLM models, computes baseline bottleneck activations, applies intervention
+                      edits, and recomputes intervened outputs.
+            flowHeading: "Request flow"
+            flowSteps:
+                - "Frontend sends input text and model/task settings to backend inference."
+                - "Backend returns baseline prediction plus concept activations."
+                - "User edits selected concept values in the interface."
+                - "Frontend sends edited concept vector for intervened inference."
+                - "Backend returns intervened output for direct comparison."
+        ml:
+            heading: "2. Research / ML Pipeline (CB-LLM)"
+            intro: >
+                This part summarizes the CB-LLM research pipeline from the original paper for converting a
+                black-box classifier into an interpretable concept-bottleneck model.
+        reference:
+            label: "Based on"
+            title: "Sun et al., Concept Bottleneck Large Language Models"
+            href: "#references"
+        diagram:
+            title: "CB-LLM classification pipeline"
+            caption: >
+                Five training steps from the original CB-LLMs paper showing how a black-box classifier is converted
+                into a concept-bottleneck model for classification.
+        sections:
+            - id: "classification"
+              title: "Turning a black-box classifier into a CB-LLM"
+              summary: "The 5-step process from the paper for converting a standard classifier into a concept-bottleneck model."
+              defaultOpen: false
+              body: |-
+                  A classification CB-LLM takes a normal text classifier and inserts an explicit concept bottleneck between the backbone model and the final class prediction.
 
-# IMPORTANT: This key must be "method" for your loader/components
-method:
-    heading: "How it works (in one minute)"
-    text: >
-        Instead of going straight from hidden neural features to a prediction, Concept Bottleneck LLMs
-        route decisions through a small set of interpretable concepts. Those concepts act like readable,
-        editable “dials” that influence the final output. We reproduced key CB-LLM results and built an
-        interactive interface that lets you intervene on concept neurons in real time.
-    image: "src/assets/cbllm.png"
-    imageCaption: "Concept contribution visualization: which concepts push the model toward each class."
-    technicalDetails: |-
-        **Optional technical note (expand/collapse on the site):**
-        - Backbone encodes text → bottleneck layer outputs concept activations.
-        - A sparse linear head maps concepts to the predicted class.
-        - Interventions scale concept activations (suppress, preserve, amplify), then recompute outputs.
+                  $$
+                  x \xrightarrow{f_{LM}} h \xrightarrow{f_{CBL}} A_N(x) \xrightarrow{\mathrm{ReLU}} A_N^+(x) \xrightarrow{W_F,b_F} y
+                  $$
 
-demo:
-    heading: "Interactive demo"
-    text: >
-        Try entering a sentence, then suppress or amplify concept sliders to see how the model’s
-        prediction changes instantly. This makes interpretability tangible: you can probe causal
-        influence instead of only reading explanations after the fact.
-    videoUrl: null
-    gifUrl: null
-    gifCaption: null
+                  ### Step 1: generate a concept set
 
-results:
-    heading: "What we found"
-    figures:
-        - image: "src/assets/cbllm.png"
-          caption: "Intervention interface: concept sliders expose and modify internal reasoning."
-        - image: "src/assets/cbllm.png"
-          caption: "Concept contributions: a readable map from concepts to predictions."
-    findings:
-        - "We reproduced key CB-LLM trends across multiple benchmark datasets."
-        - "Some concept neurons align with clear, human-meaningful themes (e.g., ‘Sports’ on AG News)."
-        - "Intervening on these neurons causally shifts predictions in predictable directions."
-        - "Multi-neuron edits reveal interactions and can reduce errors from noisy or diffuse signals."
+                  The paper first creates a set of human-readable concepts for each class using ChatGPT, then unions them into one global concept vocabulary $\mathcal{C}$.
 
-# IMPORTANT: This key must be "summary" for your loader/components
-summary:
-    heading: "Summary & impact"
-    text: >
-        This project turns interpretability into something you can interact with. Instead of only
-        showing explanations, we provide a real-time interface for testing how concepts affect model
-        decisions. The result is a public demo and a research tool for exploring transparency and
-        controllability in modern language models.
-    highlights:
-        - "Public, interactive concept intervention demo (easy to understand, fun to explore)."
-        - "Reproduction study validating CB-LLM behavior across benchmark datasets."
-        - "Multi-neuron intervention workflow for probing concept interactions."
-        - "A practical bridge between interpretability research and usable tooling."
+                  ### Step 2: score each training example with ACS
 
-bibtex: |-
-    @misc{hdsicapstone2026,
-      title        = {Opening the Bottleneck: Steering LLMs via Concept Intervention},
-      author       = {Dandekar, Neil and Guerra, Christian and Weng, Lily},
-      year         = {2026},
-      note         = {UC San Diego DSC 180AB Capstone},
-      howpublished = {\url{https://github.com/neil-dandekar/capstone}}
-    }
+                  Each example is pseudo-labeled with concept scores using **ACS**. The paper uses sentence embeddings from all-mpnet-base-v2 and computes a score vector $S_c(x)$ for every input $x$.
+
+                  ### Step 3: correct those scores with ACC
+
+                  The paper then applies **ACC** to make the concept targets more consistent with the class label:
+
+                  - negative scores are removed
+                  - concept scores tied to the wrong class are removed
+
+                  This produces the corrected target vector $S_c^{ACC}(x)$.
+
+                  ### Step 4: train the concept bottleneck layer
+
+                  The backbone and bottleneck are optimized so the learned bottleneck activations match the corrected concept targets:
+
+                  $$
+                  \max_{\theta_1,\theta_2} \frac{1}{|\mathcal{D}|} \sum_{x \in \mathcal{D}} \mathrm{Sim}\big(f_{CBL}(f_{LM}(x;\theta_1);\theta_2), S_c^{ACC}(x)\big)
+                  $$
+
+                  This is the step that turns hidden internal features into an interpretable concept representation.
+
+                  ### Step 5: train the sparse final classifier
+
+                  After the bottleneck is learned, the final class head is trained from the non-negative concept activations:
+
+                  $$
+                  \min_{W_F,b_F} \frac{1}{|\mathcal{D}|} \sum_{(x,y) \in \mathcal{D}} \mathcal{L}_{CE}\big(W_F A_N^+(x) + b_F, y\big) + \lambda R(W_F)
+                  $$
+
+                  with elastic-net regularization
+
+                  $$
+                  R(W) = \alpha \|W\|_1 + (1-\alpha)\frac{1}{2}\|W\|_2^2
+                  $$
+
+                  The paper reports $\lambda = 0.0007$ and $\alpha = 0.99$.
+
+                  ### After training
+
+                  At inference time, the model predicts from the concept activations instead of directly from the hidden state. That makes intervention possible: a user can deactivate a concept neuron or remove a concept's downstream influence and observe how the class prediction changes.
+            - id: "classification-intervention"
+              title: "How concept intervention works for classification"
+              summary: "How baseline activations become edited activations, and how those edits change class logits through the sparse final layer."
+              defaultOpen: false
+              body: |-
+                  In a trained classification CB-LLM, the bottleneck activations are
+
+                  $$
+                  A_N(x) = f_{CBL}(f_{LM}(x)), \qquad A_N^+(x) = \mathrm{ReLU}(A_N(x)).
+                  $$
+
+                  The final classifier predicts with
+
+                  $$
+                  z_i = \sum_{j=1}^{k} W_{F,ij}\,A_N^+(x)_j + b_i.
+                  $$
+
+                  This gives two separate quantities that are easy to mix up:
+
+                  - **Activation** of concept $j$: $a_j = A_N^+(x)_j$.
+                  - **Contribution** of concept $j$ to class $i$: $W_{F,ij}\,a_j$.
+
+                  A concept can have high activation but low contribution if $W_{F,ij}$ is small. A moderately active concept can still dominate a class if its weight is large.
+
+                  ### Intervention path 1: edit activations at inference
+
+                  You keep model weights fixed and edit selected concepts in the bottleneck:
+
+                  $$
+                  a'_j =
+                  \begin{cases}
+                  v_j, & j \in \mathcal{I} \\
+                  a_j, & j \notin \mathcal{I}
+                  \end{cases}
+                  $$
+
+                  then recompute logits
+
+                  $$
+                  z'_i = \sum_{j=1}^{k} W_{F,ij}\,a'_j + b_i.
+                  $$
+
+                  This is the direct "steer by concept value" mode used in the interface.
+
+                  ### Intervention path 2: concept pruning / unlearning
+
+                  Instead of changing activations, you can remove a concept's downstream effect by zeroing its final-layer connections:
+
+                  $$
+                  W'_{F,ij} = 0 \quad \text{for pruned concept } j.
+                  $$
+
+                  Then that concept contributes zero to every class, regardless of activation:
+
+                  $$
+                  W'_{F,ij}\,a_j = 0.
+                  $$
+
+                  The concept detector is still computed, but its influence is nullified in the classifier. A binary pruning mask $m \in \{0,1\}^k$ can be used to persist these decisions, e.g. by applying $W'_F = W_F\,\mathrm{diag}(m)$.
+
+    conclusion:
+        heading: "Conclusion"
+        intro: >
+            This site packages CB-LLM intervention into a workflow that is easy to inspect, explain, and demo. Its main
+            value is making concept-level steering visible through a concrete interface rather than leaving it as an
+            abstract modeling idea.
+        scopeHeading: "Scope and Limitations"
+        scopeItems:
+            - title: "What this site covers"
+              text: "It focuses on the intervention workflow itself: baseline inspection, concept editing, and before-and-after comparison."
+            - title: "What it does not claim"
+              text: "A changed output does not automatically mean a more correct or safer model decision."
+            - title: "How to interpret examples"
+              text: "The strongest evidence comes from comparing the same input before and after a targeted concept edit."
+            - title: "Product boundary"
+              text: "This is a research demo interface for interpretability and steering, not a deployment-ready decision system."
+
+references:
+    heading: "References"
+    items:
+        - authors: "Sun, Chung-En; Oikarinen, Tuomas; Ustun, Berk; Weng, Tsui-Wei"
+          year: "2025"
+          title: "Concept Bottleneck Large Language Models"
+          venue: "International Conference on Learning Representations (ICLR), poster"
+          href: "https://github.com/Trustworthy-ML-Lab/CB-LLMs"
+        - authors: "Koh, Pang Wei; Nguyen, Thao; Tang, Yew Siang; Mussmann, Stephen; Pierson, Emma; Kim, Been; Liang, Percy"
+          year: "2020"
+          title: "Concept Bottleneck Models"
+          venue: "Proceedings of the 37th International Conference on Machine Learning (ICML), PMLR 119:5338-5348"
 
 footer:
     contactEmail: "nmdandekar@ucsd.edu"
     githubLink: "https://github.com/neil-dandekar/capstone"
-    citationNote: "If you build on this work, please cite it using the BibTeX above."
-    copyright: "(c) 2026 Dandekar, Guerra, Weng — UC San Diego"
+    citationNote: "This site is a capstone demo interface for concept intervention in CB-LLM-style models."
+    copyright: "(c) 2026 Dandekar, Guerra, Weng - UC San Diego"

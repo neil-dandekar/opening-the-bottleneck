@@ -39,15 +39,15 @@ function AuthorChip({ name, affiliation, link }) {
 export default function HeroSection({ content }) {
   const effectiveToolLink = content.toolLink ?? content.demoLink;
   const effectivePaperLink = content.paperLink ?? content.paperPlaceholderLink ?? content.codeLink;
-  const scrollToBibtex = () => {
-    document.getElementById("bibtex")?.scrollIntoView({ behavior: "smooth" });
+  const scrollToReferences = () => {
+    document.getElementById("references")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section className="relative pt-28 pb-16 md:pt-36 md:pb-24">
+    <section id="top" className="relative min-h-[100svh] w-full flex items-center scroll-mt-28">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-blue-100/40 dark:bg-blue-900/20 blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-4xl mx-auto text-center px-6">
+      <div className="relative w-full max-w-5xl mx-auto text-center px-6 pt-24 pb-12 md:pt-28 md:pb-16">
         <FadeInSection>
           {content.venue && (
             <span className="inline-block mb-5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
@@ -82,16 +82,6 @@ export default function HeroSection({ content }) {
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Button
               asChild
-              variant="ghost"
-              className="!bg-blue-700 hover:!bg-blue-800 !text-white dark:!text-white shadow-md shadow-blue-700/20"
-            >
-              <a href={effectiveToolLink} target="_blank" rel="noopener noreferrer">
-                <Play className="mr-2 h-4 w-4" /> Tool
-              </a>
-            </Button>
-
-            <Button
-              asChild
               variant="outline"
               className="border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
             >
@@ -113,25 +103,31 @@ export default function HeroSection({ content }) {
             <Button
               variant="outline"
               className="border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
-              onClick={scrollToBibtex}
+              onClick={scrollToReferences}
             >
-              <Quote className="mr-2 h-4 w-4" /> BibTeX
+              <Quote className="mr-2 h-4 w-4" /> References
             </Button>
           </div>
         </FadeInSection>
 
-        {content.teaserImage && (
-          <FadeInSection delay={400}>
-            <div className="mt-14 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-xl shadow-zinc-200/50 dark:shadow-black/30">
-              <img src={content.teaserImage} alt="Teaser" className="w-full object-cover max-h-[420px]" />
-            </div>
-            {content.teaserCaption && (
-              <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500 italic max-w-xl mx-auto">
-                {content.teaserCaption}
-              </p>
-            )}
-          </FadeInSection>
-        )}
+        <FadeInSection delay={400}>
+          <div className="mt-8 inline-flex max-w-full items-center gap-4 rounded-full border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/80 px-4 py-3 md:px-5 backdrop-blur-sm shadow-md shadow-zinc-900/5">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700 dark:text-blue-300 whitespace-nowrap">
+              Try The Tool
+            </p>
+            <div className="h-5 w-px bg-zinc-200 dark:bg-zinc-700" />
+            <Button
+              asChild
+              variant="ghost"
+              className="!bg-blue-700 hover:!bg-blue-800 !text-white dark:!text-white px-5 py-2.5 text-sm shadow-md shadow-blue-700/20"
+            >
+              <a href={effectiveToolLink} target="_blank" rel="noopener noreferrer">
+                <Play className="mr-2 h-4 w-4" /> Open Live Tool
+              </a>
+            </Button>
+          </div>
+        </FadeInSection>
+
       </div>
     </section>
   );

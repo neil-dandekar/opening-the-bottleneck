@@ -5,10 +5,8 @@ const REQUIRED_TOP_LEVEL_KEYS = [
   "title",
   "tagline",
   "authors",
-  "motivation",
-  "method",
-  "results",
-  "bibtex",
+  "body",
+  "references",
   "footer"
 ];
 

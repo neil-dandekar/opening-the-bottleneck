@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import BibtexSection from "@/components/research/BibtexSection";
+import BackToTopButton from "@/components/research/BackToTopButton";
 import FooterSection from "@/components/research/FooterSection";
 import HeroSection from "@/components/research/HeroSection";
-import MethodSection from "@/components/research/MethodSection";
-import MotivationSection from "@/components/research/MotivationSection";
-import ResultsSection from "@/components/research/ResultsSection";
+import ProjectBodySection from "@/components/research/ProjectBodySection";
+import ReferencesSection from "@/components/research/ReferencesSection";
+import ScrollProgressBar from "@/components/research/ScrollProgressBar";
 import ThemeToggle from "@/components/research/ThemeToggle";
+import TopNav from "@/components/research/TopNav";
 import siteContent from "@/config/siteContent";
 
 export default function Home() {
@@ -17,9 +18,10 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${dark ? "bg-zinc-950" : "bg-white"}`}>
+      <ScrollProgressBar />
+      <TopNav />
       <ThemeToggle dark={dark} onToggle={() => setDark((value) => !value)} />
-
-      <div className="h-[3px] bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-500" />
+      <BackToTopButton />
 
       <HeroSection content={siteContent} />
 
@@ -27,10 +29,8 @@ export default function Home() {
         <hr className="border-zinc-200 dark:border-zinc-800" />
       </div>
 
-      <MotivationSection data={siteContent.motivation} />
-      <MethodSection data={siteContent.method} />
-      <ResultsSection data={siteContent.results} />
-      <BibtexSection bibtex={siteContent.bibtex} />
+      <ProjectBodySection data={siteContent.body} />
+      <ReferencesSection data={siteContent.references} />
       <FooterSection data={siteContent.footer} />
     </div>
   );

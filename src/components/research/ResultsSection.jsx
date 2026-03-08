@@ -2,8 +2,10 @@ import { CheckCircle2 } from "lucide-react";
 import FadeInSection from "./FadeInSection";
 
 export default function ResultsSection({ data }) {
+  const findingsHeading = data.findingsHeading ?? "Key Findings";
+
   return (
-    <section className="py-16 md:py-20">
+    <section id="results" className="py-16 md:py-20 scroll-mt-28">
       <div className="max-w-5xl mx-auto px-6">
         <FadeInSection>
           <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white mb-3">{data.heading}</h2>
@@ -28,7 +30,7 @@ export default function ResultsSection({ data }) {
         <FadeInSection delay={300}>
           <div className="bg-zinc-50 dark:bg-zinc-900/60 rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 md:p-8">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-5">
-              Key Findings
+              {findingsHeading}
             </h3>
             <ul className="space-y-4">
               {data.findings.map((finding, index) => (
